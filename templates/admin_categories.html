@@ -1,0 +1,57 @@
+{% extends "base_admin.html" %}
+{% set active = "categories" %}
+{% block content %}
+<div class="page-header">
+  <div class="page-header-icon">🏷️</div>
+  <div>
+    <div class="page-header-title">الأقسام</div>
+    <div class="page-header-sub">إضافة وتعديل وحذف أقسام المتجر (ملابس، إكسسوارات...)</div>
+  </div>
+</div>
+
+<!-- إضافة قسم جديد -->
+<div class="card" style="margin-bottom:24px">
+  <div style="font-weight:700;color:#1a1a1a;margin-bottom:16px;font-size:1.05rem">➕ إضافة قسم جديد</div>
+  <form method="POST" action="/admin/categories/add" style="display:flex;gap:10px;align-items:end">
+    <div class="form-group" style="flex:1;margin-bottom:0">
+      <label class="form-label">اسم القسم</label>
+      <input type="text" name="name" class="form-control" placeholder="مثال: حقائب، عبايات، مكياج..." required>
+    </div>
+    <button type="submit" class="btn btn-primary">إضافة</button>
+  </form>
+</div>
+
+<!-- قائمة الأقسام -->
+<div style="font-weight:700;color:#1a1a1a;margin-bottom:14px;font-size:1.05rem">الأقسام الحالية ({{ categories|length }})</div>
+
+{% if categories %}
+{% for cat in categories %}
+<div class="cat-pill">
+  <div style="display:flex;align-items:center;gap:14px;flex:1">
+    <span style="font-size:1.3rem">🏷️</span>
+    <div>
+      <div style="font-weight:700;color:#1a1a1a">{{ cat.name }}</div>
+      <div style="font-size:0.8rem;color:#8a8470">{{ cat.product_count }} منتج</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <form method="POST" action="/admin/categories/update/{{ cat.id }}" style="display:flex;gap:6px;align-items:center">
+      <input type="text" name="name" value="{{ cat.name }}" class="form-control" style="width:160px;padding:6px 10px;font-size:0.85rem">
+      <input type="hidden" name="display_order" value="{{ cat.display_order }}">
+      <button type="submit" class="btn btn-ghost btn-sm">💾 حفظ</button>
+    </form>
+    <form method="POST" action="/admin/categories/delete/{{ cat.id }}" onsubmit="return confirm('⚠️ حذف القسم سيجعل منتجاته بدون قسم، هل أنت متأكد؟')">
+      <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+    </form>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="alert alert-info">لا توجد أقسام بعد. أضف أول قسم من الأعلى.</div>
+{% endif %}
+
+<div class="alert alert-info" style="margin-top:20px">
+  💡 الأقسام تظهر كتابات (أزرار) فوق صفحة المتجر، والزبون يقدر يفلتر المنتجات حسب القسم. عند حذف قسم، منتجاته لا تُحذف، فقط تصبح "بدون قسم".
+</div>
+
+{% endblock %}
